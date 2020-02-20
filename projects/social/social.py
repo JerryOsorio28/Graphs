@@ -9,7 +9,7 @@ with open('friends.txt') as friends_list:
 short_friends_list = []
 shuffle(friends)
 for i in range(len(friends)):
-    if i <= 3:
+    if i <= 20:
         short_friends_list.append(friends[i])
 # print(short_friends_list)
     
@@ -104,10 +104,10 @@ class SocialGraph:
         queue.enqueue(path)
         # we initialize the dictionary with the user id
         visited[user_id] = path
-
+        # counter that tracks how many times we traversed over our graph
         counter = 0
-        
-        print('self.friendships', self.friendships)
+        for i in self.friendships:
+            print(i, 'friends:', self.friendships[i])
         # While the queue is not empty...
         while queue.size() > 0:
             # We dequeue the path
@@ -147,7 +147,7 @@ class SocialGraph:
             counter += 1
             if counter == len(self.friendships):
                 # if so, we return visited
-                print('visited', visited)
+                print('\n visited', visited)
                 return visited
             # we traverse over the friendships dic...
             for friend in self.friendships:
