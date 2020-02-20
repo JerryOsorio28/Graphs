@@ -1,6 +1,19 @@
 from random import shuffle
 from util import Queue
 
+# Contains almost 5k names
+with open('friends.txt') as friends_list:
+    friends = [line.strip() for line in friends_list]
+
+short_friends_list = []
+for i in range(len(friends)):
+    if i <= 100:
+        short_friends_list.append(friends[i])
+print(short_friends_list)
+    
+
+
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -112,17 +125,26 @@ class SocialGraph:
                         friends = True
                         # and we set in the dictionary the connection
                         visited[last_vertex] = [user_id, last_vertex]
+                # this variable will hold all the mutual friends of the current vertex and the user id
+                mutual_friends = []
                 # at this point we check if the last vertex is not a friend of the user id by checking the friends boolean..
                 if friends is False:
                     # so we check if they both share a mutual connection in their list of friends..
                     for mutual_friend in self.friendships[last_vertex]:
                         for connection in self.friendships[user_id]:
                             if mutual_friend is connection:
-                                # if they do we add the user id, last vertex and their mutual connections
-                                visited[last_vertex] = [user_id, mutual_friend, last_vertex]
+                                mutual_friends.append(mutual_friend)
+                    # if they do we add the user id, last vertex and their mutual connections
+                    print('mutual friends', last_vertex, mutual_friends)
+                # we check if there is any mutual friends..
+                if (bool(mutual_friends)) is True:
+                    # If there is, we iterate over them and add them to the friends list
+                    for mutual_friend in mutual_friends:
+                        visited[last_vertex] = [user_id, last_vertex]
+                        visited[last_vertex].insert(1, mutual_friend)
             # we check if the last vertex is the last id in friendships (it reached the end of the friendships dic)
             if last_vertex == len(self.friendships):
-                print('visited',visited)
+                # print('visited',visited)
                 # if so, we return visited
                 return visited
             # we traverse over the friendships dic...
@@ -139,11 +161,9 @@ class SocialGraph:
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(10, 2)
-    sg.add_friendship(1, 2)
-    sg.get_all_social_paths(1)
+    print(sg.users)
+    # sg.add_friendship(1, 2)
+    # sg.get_all_social_paths(2)
     # print('User`s Graph', sg.users)
     # connections = sg.get_all_social_paths(1)
     # print(connections)
-
-
-    # 
