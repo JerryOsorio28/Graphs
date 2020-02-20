@@ -5,15 +5,13 @@ from util import Queue
 with open('friends.txt') as friends_list:
     friends = [line.strip() for line in friends_list]
 
+# 
 short_friends_list = []
 for i in range(len(friends)):
-    if i <= 100:
+    if i <= 5:
         short_friends_list.append(friends[i])
-print(short_friends_list)
+# print(short_friends_list)
     
-
-
-
 class User:
     def __init__(self, name):
         self.name = name
@@ -33,9 +31,10 @@ class SocialGraph:
         """
         if user_id == friend_id:
             print("WARNING: You cannot be friends with yourself")
-        elif friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
+        if friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
             print("WARNING: Friendship already exists")
         else:
+            print('WORKING')
             self.friendships[user_id].add(friend_id)
             self.friendships[friend_id].add(user_id)
 
@@ -43,9 +42,9 @@ class SocialGraph:
         """
         Create a new user with a sequential integer ID
         """
-        self.last_id += 1  # automatically increment the ID to assign the new user
-        self.users[self.last_id] = User(name)
-        self.friendships[self.last_id] = set()
+        # self.last_id += 1  # automatically increment the ID to assign the new user
+        self.users[name] = User(name)
+        self.friendships[name] = set()
 
     def populate_graph(self, num_users, avg_friendships):
         """
@@ -58,21 +57,32 @@ class SocialGraph:
         The number of users must be greater than the average number of friendships.
         """
         # Reset graph
-        self.last_id = 0
+        # self.last_id = 0
         self.users = {}
         self.friendships = {}
         # !!!! IMPLEMENT ME
 
         # Add users
         # print('num of users', num_users)
-        for i in range(1, num_users + 1):
-            self.add_user(f'User {i}')
+        # for i in range(1, num_users + 1):
+        #     self.add_user(f'User {i}')
+        for name in short_friends_list:
+            self.add_user(name)
 
         # Create a list of all possible friendships
         possible_friendships = []
         for user_id in self.users:
-            for friend_id in range(user_id + 1, self.last_id + 1):
-                possible_friendships.append((user_id, friend_id))
+            # print('user_id', user_id)
+            for friend_id in short_friends_list:
+                # possible_friendships.append(friend_id)
+                if user_id is not friend_id:
+                    friends = (user_id, friend_id)
+                    possible_friendships.append(friends)
+
+                    
+        print('possible_friendships', possible_friendships)
+        # print('nono_repeat',no_repeat)
+        # print('users', self.users)
 
         # Next, we shuffle the list of possible friendships
         shuffle(possible_friendships)
@@ -81,6 +91,7 @@ class SocialGraph:
         # Grab the first N pairs from the shuffled list and create those friendships
         for i in range(num_users * avg_friendships // 2):
             friendship = possible_friendships[i]
+            # print('friendship', friendship)
             self.add_friendship(friendship[0], friendship[1])
 
     def get_all_social_paths(self, user_id):
@@ -160,10 +171,11 @@ class SocialGraph:
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
-    print(sg.users)
+    sg.populate_graph(len(short_friends_list), 2)
+    # sg.add_user('Aaren')
     # sg.add_friendship(1, 2)
     # sg.get_all_social_paths(2)
+    print(sg.friendships)
     # print('User`s Graph', sg.users)
     # connections = sg.get_all_social_paths(1)
     # print(connections)
