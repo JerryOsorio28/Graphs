@@ -1,4 +1,5 @@
 from random import shuffle
+from util import Queue
 
 class User:
     def __init__(self, name):
@@ -80,8 +81,51 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+        # Create an empty queue
+        queue = Queue()
+        # Create a path
+        path = []
+        # Create a visited dic
+        visited = {}
+        # Add the initial vertex to the path
+        path.append(user_id)
+        # Then add the path to the queue, should be initialized as a empty list
+        queue.enqueue(path)
+
+        visited[user_id] = path
+        print('visited', visited)
+
+        # While the queue is not empty...
+        while queue.size() > 0:
+            # Dequeue, the first PATH
+            path = queue.dequeue()
+            # GRAB THE LAST VERTEX FROM THE PATH
+            last_vertex = path[-1]
+            print('last_vertex', last_vertex)
+            # check if it has NOT been visited...
+            print('self.friendships.values', self.friendships)
+            if last_vertex not in visited:
+                # If not, we add it to the visited dic
+                print('user_id', user_id)
+                print('path', path)
+                for friends_id in self.friendships[user_id]:
+                    # print('FRIENDSHIPS VALUES', friends_id)
+                    if last_vertex is friends_id:
+                        visited[last_vertex] = [user_id, last_vertex]
+                        print('visited', visited)
+            if len(visited) > 1:
+                if last_vertex == user_id:
+                    return visited
+            #     # we traverse over the friendships dic...
+            for friend in self.friendships:
+                # print('friend',friend)
+                # if it is not, we make a copy of the path
+                path_copy = path.copy()
+                # we append the friend to the copy of the path
+                path_copy.append(friend)
+                # then we add the copy of the path to the queue
+                queue.enqueue(path_copy)
+                    
         return visited
 
 
@@ -93,7 +137,11 @@ if __name__ == '__main__':
     # sg.add_user('Waleska')
     # sg.add_user('Joseph')
     sg.add_friendship(1, 2)
-    print('friendships', sg.friendships)
+    # print('friendships', sg.friendships)
+    sg.get_all_social_paths(1)
     # print('User`s Graph', sg.users)
     # connections = sg.get_all_social_paths(1)
     # print(connections)
+
+
+    # 
