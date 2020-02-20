@@ -89,33 +89,41 @@ class SocialGraph:
         path.append(user_id)
         # Then add the path to the queue, should be initialized as a empty list
         queue.enqueue(path)
-
+        # we initialize the dictionary with the user id
         visited[user_id] = path
-        # print('visited', visited)
-
-        print('self.friendships.values', self.friendships)
+        
+        print('self.friendships', self.friendships)
         # While the queue is not empty...
         while queue.size() > 0:
-            # Dequeue, the first PATH
+            # We dequeue the path
             path = queue.dequeue()
-            # GRAB THE LAST VERTEX FROM THE PATH
+            # We grab the last vertex in the path
             last_vertex = path[-1]
-            # print('last_vertex', last_vertex)
             # check if it has NOT been visited...
             if last_vertex not in visited:
                 # If not, we add it to the visited dic
+                # we initialized a boolean here to check if the last vertex is a friend of the user id
                 friends = False
+                # so we traverse over the user id friends...
                 for friends_id in self.friendships[user_id]:
+                    # if the last vertex is found, it means they are friends..
                     if last_vertex is friends_id:
+                        # so we turn the boolean to True
                         friends = True
+                        # and we set in the dictionary the connection
                         visited[last_vertex] = [user_id, last_vertex]
+                # at this point we check if the last vertex is not a friend of the user id by checking the friends boolean..
                 if friends is False:
+                    # so we check if they both share a mutual connection in their list of friends..
                     for mutual_friend in self.friendships[last_vertex]:
                         for connection in self.friendships[user_id]:
                             if mutual_friend is connection:
+                                # if they do we add the user id, last vertex and their mutual connections
                                 visited[last_vertex] = [user_id, mutual_friend, last_vertex]
+            # we check if the last vertex is the last id in friendships (it reached the end of the friendships dic)
             if last_vertex == len(self.friendships):
                 print('visited',visited)
+                # if so, we return visited
                 return visited
             # we traverse over the friendships dic...
             for friend in self.friendships:
@@ -132,7 +140,6 @@ if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(10, 2)
     sg.add_friendship(1, 2)
-    # print('friendships', sg.friendships)
     sg.get_all_social_paths(1)
     # print('User`s Graph', sg.users)
     # connections = sg.get_all_social_paths(1)
