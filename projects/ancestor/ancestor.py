@@ -55,3 +55,4 @@ def earliest_ancestor(ancestors, starting_node):
 
 # if __name__=='__main__':
 #     earliest_ancestor((1,2), 4)
+
