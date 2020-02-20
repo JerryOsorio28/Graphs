@@ -1,4 +1,4 @@
-from random import shuffle
+from random import shuffle, choice
 from util import Queue
 
 # Contains almost 5k names
@@ -7,8 +7,9 @@ with open('friends.txt') as friends_list:
 
 # 
 short_friends_list = []
+shuffle(friends)
 for i in range(len(friends)):
-    if i <= 5:
+    if i <= 3:
         short_friends_list.append(friends[i])
 # print(short_friends_list)
     
@@ -34,7 +35,6 @@ class SocialGraph:
         if friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
             print("WARNING: Friendship already exists")
         else:
-            print('WORKING')
             self.friendships[user_id].add(friend_id)
             self.friendships[friend_id].add(user_id)
 
@@ -63,35 +63,24 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
-        # print('num of users', num_users)
-        # for i in range(1, num_users + 1):
-        #     self.add_user(f'User {i}')
         for name in short_friends_list:
             self.add_user(name)
 
         # Create a list of all possible friendships
         possible_friendships = []
         for user_id in self.users:
-            # print('user_id', user_id)
             for friend_id in short_friends_list:
                 # possible_friendships.append(friend_id)
                 if user_id is not friend_id:
                     friends = (user_id, friend_id)
                     possible_friendships.append(friends)
 
-                    
-        print('possible_friendships', possible_friendships)
-        # print('nono_repeat',no_repeat)
-        # print('users', self.users)
-
         # Next, we shuffle the list of possible friendships
         shuffle(possible_friendships)
-        # print('possible_friendships', possible_friendships)
 
         # Grab the first N pairs from the shuffled list and create those friendships
         for i in range(num_users * avg_friendships // 2):
             friendship = possible_friendships[i]
-            # print('friendship', friendship)
             self.add_friendship(friendship[0], friendship[1])
 
     def get_all_social_paths(self, user_id):
@@ -115,6 +104,8 @@ class SocialGraph:
         queue.enqueue(path)
         # we initialize the dictionary with the user id
         visited[user_id] = path
+
+        counter = 0
         
         print('self.friendships', self.friendships)
         # While the queue is not empty...
@@ -146,7 +137,6 @@ class SocialGraph:
                             if mutual_friend is connection:
                                 mutual_friends.append(mutual_friend)
                     # if they do we add the user id, last vertex and their mutual connections
-                    print('mutual friends', last_vertex, mutual_friends)
                 # we check if there is any mutual friends..
                 if (bool(mutual_friends)) is True:
                     # If there is, we iterate over them and add them to the friends list
@@ -154,9 +144,10 @@ class SocialGraph:
                         visited[last_vertex] = [user_id, last_vertex]
                         visited[last_vertex].insert(1, mutual_friend)
             # we check if the last vertex is the last id in friendships (it reached the end of the friendships dic)
-            if last_vertex == len(self.friendships):
-                # print('visited',visited)
+            counter += 1
+            if counter == len(self.friendships):
                 # if so, we return visited
+                print('visited', visited)
                 return visited
             # we traverse over the friendships dic...
             for friend in self.friendships:
@@ -174,8 +165,9 @@ if __name__ == '__main__':
     sg.populate_graph(len(short_friends_list), 2)
     # sg.add_user('Aaren')
     # sg.add_friendship(1, 2)
-    # sg.get_all_social_paths(2)
-    print(sg.friendships)
+    users = choice([user for user in sg.users.keys()])
+    sg.get_all_social_paths(users)
+    # print('users', users)
     # print('User`s Graph', sg.users)
     # connections = sg.get_all_social_paths(1)
     # print(connections)
