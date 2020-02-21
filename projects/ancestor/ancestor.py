@@ -1,6 +1,8 @@
 from util import Queue
 
 def earliest_ancestor(ancestors, starting_node):
+    ancestors = [(1, 3), (2, 3), (3, 6), (5, 6), (5, 7), (4, 5), (4, 8), (8, 9), (11, 8), (10, 1)]
+
     # Create a graph
     graph = {}
     # Keep a track of visited nodes
@@ -13,6 +15,7 @@ def earliest_ancestor(ancestors, starting_node):
             graph[i[0]] = set()
         if i[1] not in graph:
             graph[i[1]] = set()
+        print('graph', graph[i[0]])
     # we add the edges to the nodes
     for ancestor in ancestors:
         if ancestor[0] in graph and ancestor[1] in graph:
@@ -53,6 +56,6 @@ def earliest_ancestor(ancestors, starting_node):
     # we return the last vertex, indicating the farthest node in the ancestry chain
     return last_vertex
 
-# if __name__=='__main__':
-#     earliest_ancestor((1,2), 4)
+if __name__=='__main__':
+    earliest_ancestor((1,2), 4)
 

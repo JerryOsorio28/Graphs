@@ -34,81 +34,109 @@ visited_rooms = set()
 player.current_room = world.starting_room
 visited_rooms.add(player.current_room)
 
-def explore_lab(trv_path):
+def explore_lab(visited=None, path=None, trv_path=None, all_rooms=None):
 
-    visited = set()
-    player_location_history = []
+    graph = {}
+
+    room_exits = {}
+
+    if all_rooms is None:
+        all_rooms = []
+
+    if trv_path is None:
+        trv_path = []
     
-    counter = 0
+    if visited is None:
+        visited = set()
 
-    # Create an empty queue
-    queue = Queue()
-    # Add the initial vertex to the path
-    player_location_history.append(player.current_room)
-    # print('path', path)
-    # Then add the path to the queue, should be initialized as a empty list
-    queue.enqueue(player_location_history)
-    # # While the queue is not empty...
-    while queue.size() > 0:
-        # Dequeue, the first PATH
-        player_location_history = queue.dequeue() 
-        # GRAB THE LAST VERTEX FROM THE PATH
-        last_room = player_location_history[-1]
-        # else check if it's been visited
-        if last_room not in visited:
-            # print('last_room', last_room)
-        # If it has not been visited...
-            # Added to the visited dic
-            visited.add(last_room)
-            # iterate over the last vertex's neighbors..
-            if player.current_room.n_to is not None:
-                if player.current_room.n_to not in visited:
-                    player.current_room = player.current_room.n_to
-                    trv_path.append('n')
-                    counter += 1
-            elif player.current_room.w_to is not None:
-                if player.current_room.w_to not in visited:
-                    player.current_room = player.current_room.w_to
-                    trv_path.append('w')
-                    counter += 1
-            elif player.current_room.e_to is not None:
-                if player.current_room.e_to not in visited:
-                    player.current_room = player.current_room.e_to
-                    trv_path.append('e')
-                    counter += 1
-            elif player.current_room.s_to is not None:
-                if player.current_room.s_to not in visited:
-                    player.current_room = player.current_room.s_to
-                    trv_path.append('s')
-                    counter += 1
-            # visited = [0,1,2]
-            if player.current_room not in visited:
-                # if it is not, we make a copy of the path
-                copy_location_history = player_location_history.copy()
-                # we append the neighbor to the copy of the path
-                copy_location_history.append(player.current_room)
-                # then we add the copy of the path to the queue
-                queue.enqueue(copy_location_history)
+    if path is None:
+        path = []
+
+    # if player.current_room.n_to is not None:
+    #     player.current_room = player.current_room.n_to
+    #     traversal_path.append('n')
+        # print(player.current_room)
+
+    if player.current_room not in all_rooms:
+        # we append our starting vertex to the path
+        all_rooms.append(player.current_room)
+        path.append(player.current_room)
+    # we grab the last value in our path
+    if len(all_rooms) == 9:
+        print('path', path)
+        return path
+
+    last_room = path[-1]
+    # # we check if the vertex (node) is in visited
+    # if last_room not in visited:    
+    #     # if it is not,3 we added to the set
+    #     visited.add(last_room)
+
+    for exits in player.current_room.get_exits():
+        print('exits', exits)
+        if exits == 'n':
+            if player.current_room.n_to is not None and player.current_room.n_to not in all_rooms:
+                if player.current_room not in visited:
+                    visited.add(last_room)
+                player.current_room = player.current_room.n_to
+                trv_path.append('n')
+                explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms)
+        elif exits == 's':
+            if player.current_room.s_to is not None and player.current_room.s_to not in all_rooms:
+                if player.current_room not in visited:
+                    visited.add(last_room)
+                player.current_room = player.current_room.s_to
+                trv_path.append('s')
+                explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms)
             else:
-                for i in range(counter):
-                    print('counter', counter)
-                    player.current_room = player.current_room.s_to
-                counter = 0
-            print('visited', visited)
-            print('trv path', trv_path)
-            # queue.enqueue(player.current_room)
+                visited.add(last_room)
+                prev_room = player.current_room
+                while prev_room in visited:
+                    if prev_room != 'Room 0':
+                        player.current_room = player.current_room.s_to
+                        visited.pop()
+                        path.pop()
+                        trv_path.append('s')
+                    else:
+                        explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms)
 
-            # if player.current_room not in visited:
-            #     copy_location_history = player_location_history.copy()
-            #     copy_location_history.append(player.current_room)
-            #     queue.enqueue(copy_location_history)
+        elif exits == 'w':
+            if player.current_room.w_to is not None and player.current_room.w_to not in all_rooms:
+                player.current_room = player.current_room.w_to
+                trv_path.append('w')
+                explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms)
+        elif exits == 'e':
+            if player.current_room.e_to is not None and player.current_room.e_to not in all_rooms:
+                player.current_room = player.current_room.e_to
+                trv_path.append('e')
+                explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms)
 
+        print('visited', visited)
+        print('trv path', trv_path)
+                
+            # if exits == 'e':
+            #     player.current_room = player.current_room.e_to
+            # if exits == 'w':
+            #     player.current_room = player.current_room.w_to
+            # if exits == 's':
+            #     player.current_room = player.current_room.s_to
+        # return graph
 
-    # print('current room', player.current_room)
-            
-explore_lab(traversal_path)
+        # we check if the neighbors are in the visited set...
+        # if neighbor not in visited:
+        #     # if they are NOT, we call the function recursively on it.
+        #     self.dfs_recursive(neighbor, destination_vertex, path=path, visited=visited)
+        # if neighbor in path:
+        #     path.pop()
 
-# print('traversal_path',traversal_path)
+    print('players current room ID', player.current_room.id)
+    # print('Exits for current rooms', player.current_room.get_exits())
+    # print('Players direction', player.travel(direction))
+    print("Players current location", player.current_room)
+    print('graph', graph)
+explore_lab()
+
+print('traversal_path',traversal_path)
 
 
 for move in traversal_path:
@@ -126,12 +154,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-# player.current_room.print_room_description(player)
-# while True:
-#     cmds = input("-> ").lower().split(" ")
-#     if cmds[0] in ["n", "s", "e", "w"]:
-#         player.travel(cmds[0], True)
-#     elif cmds[0] == "q":
-#         break
-#     else:
-#         print("I did not understand that command.")
+player.current_room.print_room_description(player)
+while True:
+    cmds = input("-> ").lower().split(" ")
+    if cmds[0] in ["n", "s", "e", "w"]:
+        player.travel(cmds[0], True)
+    elif cmds[0] == "q":
+        break
+    else:
+        print("I did not understand that command.")

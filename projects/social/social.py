@@ -9,7 +9,7 @@ with open('friends.txt') as friends_list:
 short_friends_list = []
 shuffle(friends)
 for i in range(len(friends)):
-    if i < 1000:
+    if i < 10:
         short_friends_list.append(friends[i])
 # print(short_friends_list)
     
@@ -108,8 +108,10 @@ class SocialGraph:
         visited[user_id] = path
         # counter that tracks how many times we traversed over our graph
         counter = 0
+        # Prints all users and their friends
         for i in self.friendships:
             print(i, 'friends:', self.friendships[i])
+
         # While the queue is not empty...
         while queue.size() > 0:
             # We dequeue the path
@@ -149,8 +151,7 @@ class SocialGraph:
             counter += 1
             if counter == len(self.friendships):
                 # if so, we return visited
-                print('\n visited', visited)
-                return visited
+                print('visited', visited)
             # we traverse over the friendships dic...
             for friend in self.friendships:
                 # we check if the neighbor is NOT marked as visited...
@@ -164,23 +165,23 @@ class SocialGraph:
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph(len(short_friends_list), 5)
+    sg.populate_graph(len(short_friends_list), 2)
     users = choice([user for user in sg.users.keys()])
     sg.get_all_social_paths(users)
-    connections = sg.get_all_social_paths(users)
 
+    # connections = sg.get_all_social_paths(users)
     # Finds the average of dregree of separation
-    dgs = 0
-    total = 0
-    for connection in range(1, 1001):
-        if connection < 1000:
-            total += 1
-            dgs += (1000 - 1)
-    avg = dgs / 1000
-    percentage = (total / 1000) * 100
-    print(f'{percentage}%')
-    # Finds the average number of friends per user
-    friends_avg = 0
-    for i in sg.friendships.values():
-        friends_avg += len(i)
-    print(friends_avg / 100)
+    # dgs = 0
+    # total = 0
+    # for connection in range(1, 1001):
+    #     if connection < 1000:
+    #         total += 1
+    #         dgs += (1000 - 1)
+    # avg = dgs / 1000
+    # percentage = (total / 1000) * 100
+    # print(f'{percentage}%')
+    # # Finds the average number of friends per user
+    # friends_avg = 0
+    # for i in sg.friendships.values():
+    #     friends_avg += len(i)
+    # print(friends_avg / 1000)
