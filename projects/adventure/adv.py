@@ -56,14 +56,32 @@ def explore_lab(trv_path):
         last_room = player_location_history[-1]
         # else check if it's been visited
         if last_room not in visited:
+            # print('last_room', last_room)
         # If it has not been visited...
             # Added to the visited dic
             visited.add(last_room)
             # iterate over the last vertex's neighbors..
             if player.current_room.n_to is not None:
-                player.current_room = player.current_room.n_to
-                trv_path.append('n')
-                counter += 1
+                if player.current_room.n_to not in visited:
+                    player.current_room = player.current_room.n_to
+                    trv_path.append('n')
+                    counter += 1
+            elif player.current_room.w_to is not None:
+                if player.current_room.w_to not in visited:
+                    player.current_room = player.current_room.w_to
+                    trv_path.append('w')
+                    counter += 1
+            elif player.current_room.e_to is not None:
+                if player.current_room.e_to not in visited:
+                    player.current_room = player.current_room.e_to
+                    trv_path.append('e')
+                    counter += 1
+            elif player.current_room.s_to is not None:
+                if player.current_room.s_to not in visited:
+                    player.current_room = player.current_room.s_to
+                    trv_path.append('s')
+                    counter += 1
+            # visited = [0,1,2]
             if player.current_room not in visited:
                 # if it is not, we make a copy of the path
                 copy_location_history = player_location_history.copy()
@@ -71,17 +89,21 @@ def explore_lab(trv_path):
                 copy_location_history.append(player.current_room)
                 # then we add the copy of the path to the queue
                 queue.enqueue(copy_location_history)
-            for i in range(counter):
-                print('i', i)
-                player.current_room = player.current_room.s_to
+            else:
+                for i in range(counter):
+                    print('counter', counter)
+                    player.current_room = player.current_room.s_to
+                counter = 0
             print('visited', visited)
-            counter = 0
-            queue.enqueue(player.current_room)
-        if player.current_room.w_to is not None:
-            player.current_room = player.current_room.w_to
-            trv_path.append('w')
-            counter
-    # print('counter', counter)
+            print('trv path', trv_path)
+            # queue.enqueue(player.current_room)
+
+            # if player.current_room not in visited:
+            #     copy_location_history = player_location_history.copy()
+            #     copy_location_history.append(player.current_room)
+            #     queue.enqueue(copy_location_history)
+
+
     # print('current room', player.current_room)
             
 explore_lab(traversal_path)
