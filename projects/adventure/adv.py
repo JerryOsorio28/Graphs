@@ -47,7 +47,7 @@ def explore_lab(visited=None, path=None, trv_path=None, all_rooms=None, prev_roo
         trv_path = []
     
     if visited is None:
-        visited = set()
+        visited = []
 
     if path is None:
         path = []
@@ -59,18 +59,19 @@ def explore_lab(visited=None, path=None, trv_path=None, all_rooms=None, prev_roo
         # we append our starting vertex to the path
         all_rooms.append(player.current_room)
         path.append(player.current_room)
+        print('first path', path)
+        # print('HWHATS player.current_room', player.current_room.id)
     # we grab the last value in our path
     if len(all_rooms) == 9:
         print('trv_path', trv_path)
         return trv_path
 
     for exits in player.current_room.get_exits():
-        print("Players current location", player.current_room)
         # print('exits', exits)
         if exits == 'n':
             if player.current_room.n_to is not None and player.current_room.n_to not in all_rooms:
                 if player.current_room not in visited:
-                    visited.add(player.current_room)
+                    visited.append(player.current_room)
                     prev_room.append(player.current_room)
                 player.current_room = player.current_room.n_to
                 trv_path.append('n')
@@ -78,7 +79,7 @@ def explore_lab(visited=None, path=None, trv_path=None, all_rooms=None, prev_roo
         elif exits == 's':
             if player.current_room.s_to is not None and player.current_room.s_to not in all_rooms:
                 if player.current_room not in visited:
-                    visited.add(player.current_room)
+                    visited.append(player.current_room)
                     prev_room.append(player.current_room) 
                 player.current_room = player.current_room.s_to
                 trv_path.append('s')
@@ -86,7 +87,7 @@ def explore_lab(visited=None, path=None, trv_path=None, all_rooms=None, prev_roo
         elif exits == 'w':
             if player.current_room.w_to is not None and player.current_room.w_to not in all_rooms:
                 if player.current_room not in visited:
-                    visited.add(player.current_room)
+                    visited.append(player.current_room)
                     prev_room.append(player.current_room) 
                 player.current_room = player.current_room.w_to
                 trv_path.append('w')
@@ -94,43 +95,54 @@ def explore_lab(visited=None, path=None, trv_path=None, all_rooms=None, prev_roo
         elif exits == 'e':
             if player.current_room.e_to is not None and player.current_room.e_to not in all_rooms:
                 if player.current_room not in visited:
-                    visited.add(player.current_room)
+                    visited.append(player.current_room)
                     prev_room.append(player.current_room) 
                 player.current_room = player.current_room.e_to
                 trv_path.append('e')
                 explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms, prev_room=prev_room)
-
-        print('ITS WORKING SO FAR')
+        # print('What is north???', player.current_room.n_to)
         if player.current_room not in visited:
-            visited.add(player.current_room)
+            visited.append(player.current_room)
             prev_room.append(player.current_room)
+            # print('visited', visited)
         while player.current_room in visited:
             if player.current_room != 'Room 0':
-                path.pop()
+                # path.pop()
                 visited.pop()
                 prev_room.pop()
-                if trv_path[-1] == 'n':
-                    if player.current_room.s_to == path[-1]:
-                        trv_path.append('s')
-                        player.current_room = path[-1]
-                        explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms, prev_room=prev_room)
-                    else: 
-                        trv_path.append('n')
-                        player.current_room = path[-1]
-                        explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms, prev_room=prev_room)
-                print('What is north???', player.current_room.n_to)
                 print('What is path here???', path)
-                return
-                # elif trv_path[-1] == 's':
-                #     if player.current_room.n_to == path[-1]:
-                #         trv_path.append('n')
-                #         player.current_room = path[-1]
-                #         explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms, prev_room=prev_room)
-                #     else:
-                #         trv_path.append('s')
-                #         player.current_room = path[-1]
-                #         explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms, prev_room=prev_room)
-
+                print('visited', visited)
+                print('trv path', trv_path)
+                print("all_rooms", all_rooms)
+                print("Players current location", player.current_room)
+                if trv_path[-1] == 'n':
+                    if len(visited) > 0:
+                        if player.current_room.s_to == visited[-1]:
+                            trv_path.append('s')
+                            player.current_room = visited[-1]
+                            # if player.current_room not in visited:
+                            #     visited.append(player.current_room)
+                            #     prev_room.append(player.current_room)
+                            explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms, prev_room=prev_room)
+                        else:
+                            trv_path.append('n')
+                            player.current_room = path[-1]
+                            explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms, prev_room=prev_room)
+                      
+                elif trv_path[-1] == 's':
+                    if len(visited) > 0:
+                        print('Passed?', True)
+                        if player.current_room.n_to == visited[-1]:
+                            trv_path.append('n')
+                            player.current_room = visited[-1]
+                            # if player.current_room not in visited:
+                            #     visited.append(player.current_room)
+                            #     prev_room.append(player.current_room)
+                            explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms, prev_room=prev_room)
+                        else:
+                            trv_path.append('s')
+                            player.current_room = visited[-1]
+                            explore_lab(visited=visited, path=path, trv_path=trv_path, all_rooms=all_rooms, prev_room=prev_room)
                 # elif trv_path[-1] == 'w':
                 #     if player.current_room.e_to == path[-1]:
                 #         trv_path.append('e')
