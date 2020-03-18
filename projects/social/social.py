@@ -124,13 +124,13 @@ class SocialGraph:
                 # we initialized a boolean here to check if the last vertex is a friend of the user id
                 friends = False
                 # so we traverse over the user id friends...
-                for friends_id in self.friendships[user_id]:
+                # for friends_id in self.friendships[user_id]:
                     # if the last vertex is found, it means they are friends..
-                    if last_vertex is friends_id:
-                        # so we turn the boolean to True
-                        friends = True
-                        # and we set in the dictionary the connection
-                        visited[last_vertex] = [user_id, last_vertex]
+                if last_vertex in self.friendships[user_id]:
+                    # so we turn the boolean to True
+                    friends = True
+                    # and we set in the dictionary the connection
+                    visited[last_vertex] = [user_id, last_vertex]
                 # this variable will hold all the mutual friends of the current vertex and the user id
                 mutual_friends = []
                 # at this point we check if the last vertex is not a friend of the user id by checking the friends boolean..
@@ -138,16 +138,15 @@ class SocialGraph:
                     # so we check if they both share a mutual connection in their list of friends..
                     for mutual_friend in self.friendships[last_vertex]:
                         for connection in self.friendships[user_id]:
+                            # if they do we add the user id, last vertex and their mutual connections
                             if mutual_friend is connection:
                                 mutual_friends.append(mutual_friend)
-                    # if they do we add the user id, last vertex and their mutual connections
                 # we check if there is any mutual friends..
                 if (bool(mutual_friends)) is True:
                     # If there is, we iterate over them and add them to the friends list
                     for mutual_friend in mutual_friends:
-                        visited[last_vertex] = [user_id, last_vertex]
-                        visited[last_vertex].insert(1, mutual_friend)
-            # we check if the last vertex is the last id in friendships (it reached the end of the friendships dic)
+                        visited[last_vertex] = [user_id, mutual_friend, last_vertex]
+            # ---------------------------------- RETURNS THE EXTENDED NETWORK LIST
             counter += 1
             if counter == len(self.friendships):
                 # if so, we return visited
